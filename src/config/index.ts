@@ -7,5 +7,6 @@ dotenv.config({
 
 
 export const ConfigFile = {
+    NODE_ENV: process.env.NODE_ENV,
     post: process.env.PORT
 }
