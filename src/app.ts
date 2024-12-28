@@ -2,13 +2,15 @@ import express, { Application, Request, Response } from 'express';
 import globalErrorHandler from './app/middleware/globalErrorHandler';
 import cors from 'cors'
 import notFound from './app/middleware/notFound';
+import cookieParser from 'cookie-parser'
 
 
 const app: Application = express();
 
+app.use(cookieParser())
 app.use(express.json());
 app.use(cors({
-    origin: '*',
+    origin: '*',                // domain link hare when deploy this app
     credentials: true,
 }))
 
@@ -18,8 +20,8 @@ app.get('/', (req: Request, res: Response) => {
   res.send({ message: 'Server is running' });
 });
 
-app.use(globalErrorHandler)    //todo global Error handler 
-app.use(notFound)           //todo user request route not found handler
+app.use(globalErrorHandler)    //  global Error handler 
+app.use(notFound)              //  user request route not found handler
  
 
 export default app;

@@ -28,17 +28,29 @@ function main() {
     });
 }
 main();
-//todo: handel unhandled Rejection and  uncaught Exception error
-process.on('uncaughtException', () => {
-    console.log('Unhandled Promise Rejection if deleted, shutting down server');
+// Handle uncaught exceptions
+process.on('unhandledRejection', (reason) => {
+    console.log('Unhandled Promise Rejection! Shutting down the server...');
+    console.log(reason);
     if (server) {
         server.close(() => {
             process.exit(1);
         });
     }
-    process.exit(1);
+    else {
+        process.exit(1);
+    }
 });
-process.on('uncaughtException', () => {
-    console.log("Uncaught Exception if deleted, shutting down server ");
-    process.exit(1);
+// Handle unhandled promise rejections
+process.on('uncaughtException', (err) => {
+    console.log('Uncaught Exception! Shutting down the server...');
+    console.log(err.name, err.message);
+    if (server) {
+        server.close(() => {
+            process.exit(1);
+        });
+    }
+    else {
+        process.exit(1);
+    }
 });
