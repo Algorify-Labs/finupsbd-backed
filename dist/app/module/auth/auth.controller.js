@@ -25,6 +25,16 @@ const signUp = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
         data: result
     });
 }));
+const validatePin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.AuthServices.validatePin(req.body);
+    res.status(http_status_codes_1.StatusCodes.CREATED).json({
+        success: true,
+        message: "User verify successfully please Login",
+        statusCode: http_status_codes_1.StatusCodes.CREATED,
+        data: result
+    });
+}));
 exports.AuthController = {
-    signUp
+    signUp,
+    validatePin
 };

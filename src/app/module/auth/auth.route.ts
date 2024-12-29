@@ -8,6 +8,7 @@ const router = express.Router()
 
 
 router.post('/signUp', validateRequest(UserValidation.createUserValidationSchema), AuthController.signUp)
+router.post('/validate-pin', validateRequest(UserValidation.verifyPinValidationSchema), AuthController.validatePin )
 
 
 export const AuthRouter = router
