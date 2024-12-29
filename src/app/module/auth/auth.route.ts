@@ -1,10 +1,13 @@
 import express from "express"
+import { AuthController } from "./auth.controller"
+import validateRequest from "../../middleware/validateRequest"
+import { UserValidation } from "../user/user.validation"
 
 const router = express.Router()
 
 
 
-router.post('/signUp')
+router.post('/signUp', validateRequest(UserValidation.createUserValidationSchema), AuthController.signUp)
 
 
 export const AuthRouter = router

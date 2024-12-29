@@ -28,11 +28,13 @@
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
+    "@supabase/supabase-js": "^2.47.10",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http-status-codes": "^2.3.0",
-    "prisma": "^6.1.0"
+    "prisma": "^6.1.0",
+    "zod": "^3.24.1"
   }
 }
