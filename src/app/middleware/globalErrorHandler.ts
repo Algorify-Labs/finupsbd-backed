@@ -15,7 +15,7 @@ const globalErrorHandler = (err: any, req:Request, res: Response, next: NextFunc
     
     res.status(StatusCodes.BAD_GATEWAY).json({
         success: false, 
-        message: "Something went's wrong", 
+        message: err.message || "Something went's wrong", 
         error: err, 
         stack: ConfigFile.NODE_ENV === "production" ?  null : err.stack
     })
