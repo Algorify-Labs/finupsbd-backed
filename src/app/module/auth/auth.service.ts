@@ -1,7 +1,9 @@
 import { prisma } from '../../../app';
 import { passwordHash } from '../../utils/passwordHash';
 import sendEmail from '../../utils/sendEmail';
+import { accessTokenGenerate } from '../../utils/tokenGenerate';
 import { TUser } from '../user/user.interface';
+import bcrypt from 'bcrypt';
 
 const signUp = async (payload: TUser) => {
   payload.password = await passwordHash(payload.password);
@@ -11,8 +13,8 @@ const signUp = async (payload: TUser) => {
   const pinExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
   payload.pin = pin;
   payload.pinExpiry = pinExpiry;
- const result = await prisma.user.create({data: payload})
-console.log(result);
+  const result = await prisma.user.create({ data: payload });
+  console.log(result);
   const MailSubject = 'Your PIN for Verification';
   const MailText = `
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px; background-color: #f4f7fa; border-radius: 8px;">
@@ -28,70 +30,92 @@ console.log(result);
     </div>
   </div>
 `;
- await sendEmail(payload?.email, MailSubject, MailText);
- 
+  await sendEmail(payload?.email, MailSubject, MailText);
 
-
- return "Send Your pin Check your email! Thank you"
+  return 'Send Your pin Check your email! Thank you';
 };
 
-const validatePin = async (payload: {email: string, pin: string}) => {
-    const {email, pin} = payload
+const validatePin = async (payload: { email: string; pin: string }) => {
+  const { email, pin } = payload;
 
-    const user = await prisma.user.findUnique({where:{email}})
-    console.log(user);
-    if (!user) {
-        throw new Error("User not found")
-      }
-    
-      const currentTime = new Date();
-      if (user?.pinExpiry && user?.pinExpiry < currentTime) {
-        throw new Error('PIN has expired')
-      }
-    
-      if (user?.pin !== pin) {
-        throw new Error('Invalid PIN')
-        // return { success: false, message: 'Invalid PIN' };
-      }
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    throw new Error('User not found');
+  }
 
-     await prisma.user.update({
-        where: {email},
-        data: {emailVerified: true}
-    })
+  const currentTime = new Date();
+  if (user?.pinExpiry && user?.pinExpiry < currentTime) {
+    throw new Error('PIN has expired');
+  }
 
-    return {}
-}
+  if (user?.pin !== pin) {
+    throw new Error('Invalid PIN');
+    // return { success: false, message: 'Invalid PIN' };
+  }
+
+  await prisma.user.update({
+    where: { email },
+    data: { emailVerified: true },
+  });
+
+  return {};
+};
+
+const login = async (payload: { email: string; password: string }) => {
+  const { email } = payload;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  console.log(user);
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (!user.emailVerified) {
+    throw new Error(
+      'Your email is not verified. Please verify your email before logging in.'
+    );
+  }
+
+  if (!user?.isActive) {
+    throw new Error('Your account is inactive. Please contact support.');
+  }
+
+  const passwordCompare = await bcrypt.compare(
+    payload?.password,
+    user?.password
+  );
+
+  if (!passwordCompare) {
+    throw new Error('Invalid password! please input valid password.');
+  }
+
+  const jwtPayload = {
+    userId: user?.id, 
+    role: user?.role,
+    email: user?.email
+  }
+
+  const accessToken = accessTokenGenerate(jwtPayload, "1d")
 
 
 
-const login = async (payload: {email: string, password: string}) => {
-    const {email, password} = payload
-
-    
-    const user = await prisma.user.findUnique({where:{email}})
-    console.log(user);
-
-    // if (!user) {
-    //     throw new Error("User not found")
-    //   }
-    
-    //   const currentTime = new Date();
-    //   if (user?.pinExpiry && user?.pinExpiry < currentTime) {
-    //     throw new Error('PIN has expired')
-    //   }
-    
-    //   if (user?.pin !== pin) {
-    //     throw new Error('Invalid PIN')
-    //     // return { success: false, message: 'Invalid PIN' };
-    //   }
-
-
-
-    return {}
-}
+  
+  await prisma.user.update({
+    where: {
+      email: user?.email
+    }, 
+    data: {
+      lastLogin: new Date()
+    }
+  })   // last login tracking
+  return {
+    accessToken
+  };
+};
 
 export const AuthServices = {
   signUp,
-  validatePin, 
-  login
+  validatePin,
+  login,
 };

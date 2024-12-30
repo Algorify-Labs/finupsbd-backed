@@ -16,6 +16,8 @@ exports.AuthServices = void 0;
 const app_1 = require("../../../app");
 const passwordHash_1 = require("../../utils/passwordHash");
 const sendEmail_1 = __importDefault(require("../../utils/sendEmail"));
+const tokenGenerate_1 = require("../../utils/tokenGenerate");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const signUp = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     payload.password = yield (0, passwordHash_1.passwordHash)(payload.password);
     //   const pin = crypto.randomBytes(3).toString('hex'); // 6-digit PIN
@@ -41,14 +43,13 @@ const signUp = (payload) => __awaiter(void 0, void 0, void 0, function* () {
   </div>
 `;
     yield (0, sendEmail_1.default)(payload === null || payload === void 0 ? void 0 : payload.email, MailSubject, MailText);
-    return "Send Your pin Check your email! Thank you";
+    return 'Send Your pin Check your email! Thank you';
 });
 const validatePin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, pin } = payload;
     const user = yield app_1.prisma.user.findUnique({ where: { email } });
-    console.log(user);
     if (!user) {
-        throw new Error("User not found");
+        throw new Error('User not found');
     }
     const currentTime = new Date();
     if ((user === null || user === void 0 ? void 0 : user.pinExpiry) && (user === null || user === void 0 ? void 0 : user.pinExpiry) < currentTime) {
@@ -60,29 +61,47 @@ const validatePin = (payload) => __awaiter(void 0, void 0, void 0, function* () 
     }
     yield app_1.prisma.user.update({
         where: { email },
-        data: { emailVerified: true }
+        data: { emailVerified: true },
     });
     return {};
 });
 const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = payload;
+    const { email } = payload;
     const user = yield app_1.prisma.user.findUnique({ where: { email } });
     console.log(user);
-    // if (!user) {
-    //     throw new Error("User not found")
-    //   }
-    //   const currentTime = new Date();
-    //   if (user?.pinExpiry && user?.pinExpiry < currentTime) {
-    //     throw new Error('PIN has expired')
-    //   }
-    //   if (user?.pin !== pin) {
-    //     throw new Error('Invalid PIN')
-    //     // return { success: false, message: 'Invalid PIN' };
-    //   }
-    return {};
+    if (!user) {
+        throw new Error('User not found');
+    }
+    if (!user.emailVerified) {
+        throw new Error('Your email is not verified. Please verify your email before logging in.');
+    }
+    if (!(user === null || user === void 0 ? void 0 : user.isActive)) {
+        throw new Error('Your account is inactive. Please contact support.');
+    }
+    const passwordCompare = yield bcrypt_1.default.compare(payload === null || payload === void 0 ? void 0 : payload.password, user === null || user === void 0 ? void 0 : user.password);
+    if (!passwordCompare) {
+        throw new Error('Invalid password! please input valid password.');
+    }
+    const jwtPayload = {
+        userId: user === null || user === void 0 ? void 0 : user.id,
+        role: user === null || user === void 0 ? void 0 : user.role,
+        email: user === null || user === void 0 ? void 0 : user.email
+    };
+    const accessToken = (0, tokenGenerate_1.accessTokenGenerate)(jwtPayload, "1d");
+    yield app_1.prisma.user.update({
+        where: {
+            email: user === null || user === void 0 ? void 0 : user.email
+        },
+        data: {
+            lastLogin: new Date()
+        }
+    }); // last login tracking
+    return {
+        accessToken
+    };
 });
 exports.AuthServices = {
     signUp,
     validatePin,
-    login
+    login,
 };

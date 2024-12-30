@@ -14,5 +14,7 @@ exports.ConfigFile = {
     post: process.env.PORT,
     BCRYPT_SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS,
     NODE_MAILER_EMAIL: process.env.NODE_MAILER_EMAIL,
-    NODE_MAILER_PASS: process.env.NODE_MAILER_PASS
+    NODE_MAILER_PASS: process.env.NODE_MAILER_PASS,
+    JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
 };
