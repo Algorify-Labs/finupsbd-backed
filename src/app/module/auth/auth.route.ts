@@ -11,4 +11,6 @@ router.post('/signUp', validateRequest(UserValidation.createUserValidationSchema
 router.post('/validate-pin', validateRequest(UserValidation.verifyPinValidationSchema), AuthController.validatePin )
 
 
+router.post('/login', validateRequest(UserValidation.loginValidationSchema), AuthController.login )
+
 export const AuthRouter = router

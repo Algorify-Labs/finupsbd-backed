@@ -15,6 +15,7 @@ const signUp = catchAsync(async (req, res) => {
     })
 })
 
+
 const validatePin = catchAsync(async (req, res) => {
    
     const result = await AuthServices.validatePin(req.body)
@@ -28,10 +29,24 @@ const validatePin = catchAsync(async (req, res) => {
 })
 
 
+const login = catchAsync(async (req, res) => {
+   
+    const result = await AuthServices.login(req.body)
+    
+    res.status(StatusCodes.OK).json({
+        success: true, 
+        message: "User login successfully",
+        statusCode: StatusCodes.OK,
+        data: result
+    })
+})
+
+
 
 
 
 export const AuthController = {
     signUp, 
-    validatePin
+    validatePin, 
+    login
 }

@@ -11,7 +11,7 @@ const moduleRouter = [
     {
         path: '/auth',
         route: auth_route_1.AuthRouter
-    }
+    },
 ];
 moduleRouter.forEach(item => router.use(item.path, item.route));
 exports.RootRouter = router;

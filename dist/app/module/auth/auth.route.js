@@ -11,4 +11,5 @@ const user_validation_1 = require("../user/user.validation");
 const router = express_1.default.Router();
 router.post('/signUp', (0, validateRequest_1.default)(user_validation_1.UserValidation.createUserValidationSchema), auth_controller_1.AuthController.signUp);
 router.post('/validate-pin', (0, validateRequest_1.default)(user_validation_1.UserValidation.verifyPinValidationSchema), auth_controller_1.AuthController.validatePin);
+router.post('/login', (0, validateRequest_1.default)(user_validation_1.UserValidation.loginValidationSchema), auth_controller_1.AuthController.login);
 exports.AuthRouter = router;

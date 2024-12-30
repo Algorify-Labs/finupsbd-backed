@@ -45,12 +45,13 @@ const signUp = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const validatePin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, pin } = payload;
-    const user = app_1.prisma.user.findUnique({ where: { email } });
+    const user = yield app_1.prisma.user.findUnique({ where: { email } });
+    console.log(user);
     if (!user) {
         throw new Error("User not found");
     }
     const currentTime = new Date();
-    if ((user === null || user === void 0 ? void 0 : user.pinExpiry) < currentTime) {
+    if ((user === null || user === void 0 ? void 0 : user.pinExpiry) && (user === null || user === void 0 ? void 0 : user.pinExpiry) < currentTime) {
         throw new Error('PIN has expired');
     }
     if ((user === null || user === void 0 ? void 0 : user.pin) !== pin) {
@@ -59,11 +60,29 @@ const validatePin = (payload) => __awaiter(void 0, void 0, void 0, function* () 
     }
     yield app_1.prisma.user.update({
         where: { email },
-        data: { pin }
+        data: { emailVerified: true }
     });
-    return 'PIN validated successfully';
+    return {};
+});
+const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = payload;
+    const user = yield app_1.prisma.user.findUnique({ where: { email } });
+    console.log(user);
+    // if (!user) {
+    //     throw new Error("User not found")
+    //   }
+    //   const currentTime = new Date();
+    //   if (user?.pinExpiry && user?.pinExpiry < currentTime) {
+    //     throw new Error('PIN has expired')
+    //   }
+    //   if (user?.pin !== pin) {
+    //     throw new Error('Invalid PIN')
+    //     // return { success: false, message: 'Invalid PIN' };
+    //   }
+    return {};
 });
 exports.AuthServices = {
     signUp,
-    validatePin
+    validatePin,
+    login
 };

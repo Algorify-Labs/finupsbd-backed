@@ -38,14 +38,14 @@ console.log(result);
 const validatePin = async (payload: {email: string, pin: string}) => {
     const {email, pin} = payload
 
-    const user = prisma.user.findUnique({where:{email}})
-   
+    const user = await prisma.user.findUnique({where:{email}})
+    console.log(user);
     if (!user) {
         throw new Error("User not found")
       }
     
       const currentTime = new Date();
-      if (user?.pinExpiry < currentTime) {
+      if (user?.pinExpiry && user?.pinExpiry < currentTime) {
         throw new Error('PIN has expired')
       }
     
@@ -56,13 +56,42 @@ const validatePin = async (payload: {email: string, pin: string}) => {
 
      await prisma.user.update({
         where: {email},
-        data: {pin}
+        data: {emailVerified: true}
     })
 
-    return 'PIN validated successfully'
+    return {}
+}
+
+
+
+const login = async (payload: {email: string, password: string}) => {
+    const {email, password} = payload
+
+    
+    const user = await prisma.user.findUnique({where:{email}})
+    console.log(user);
+
+    // if (!user) {
+    //     throw new Error("User not found")
+    //   }
+    
+    //   const currentTime = new Date();
+    //   if (user?.pinExpiry && user?.pinExpiry < currentTime) {
+    //     throw new Error('PIN has expired')
+    //   }
+    
+    //   if (user?.pin !== pin) {
+    //     throw new Error('Invalid PIN')
+    //     // return { success: false, message: 'Invalid PIN' };
+    //   }
+
+
+
+    return {}
 }
 
 export const AuthServices = {
   signUp,
-  validatePin
+  validatePin, 
+  login
 };

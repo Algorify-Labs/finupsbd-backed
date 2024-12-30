@@ -22,6 +22,7 @@ const globalErrorHandler = (err, req, res, next) => {
         newMessage = 'Validation Error';
         error = err === null || err === void 0 ? void 0 : err.issues;
     }
+    //generics error handle
     if (err instanceof Error) {
         newMessage = err === null || err === void 0 ? void 0 : err.message;
         statusCode = http_status_codes_1.StatusCodes.BAD_REQUEST;

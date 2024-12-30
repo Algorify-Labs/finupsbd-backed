@@ -30,6 +30,7 @@ const globalErrorHandler = (
     error = err?.issues;
   }
 
+  //generics error handle
   if (err instanceof Error) {
     newMessage = err?.message
     statusCode = StatusCodes.BAD_REQUEST

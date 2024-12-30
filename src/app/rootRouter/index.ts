@@ -8,7 +8,7 @@ const moduleRouter = [
     {
         path: '/auth', 
         route: AuthRouter
-    }
+    },
 ]
 
 
