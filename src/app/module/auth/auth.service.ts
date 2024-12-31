@@ -6,6 +6,7 @@ import { TUser } from '../user/user.interface';
 import bcrypt from 'bcrypt';
 
 const signUp = async (payload: TUser) => {
+  console.log(payload);
   payload.password = await passwordHash(payload.password);
 
   //   const pin = crypto.randomBytes(3).toString('hex'); // 6-digit PIN
@@ -13,6 +14,7 @@ const signUp = async (payload: TUser) => {
   const pinExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
   payload.pin = pin;
   payload.pinExpiry = pinExpiry;
+
   const result = await prisma.user.create({ data: payload });
   console.log(result);
   const MailSubject = 'Your PIN for Verification';
@@ -113,6 +115,13 @@ const login = async (payload: { email: string; password: string }) => {
     accessToken
   };
 };
+
+
+
+
+
+
+
 
 export const AuthServices = {
   signUp,

@@ -15,6 +15,19 @@ const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield app_1.prisma.user.findMany();
     return result;
 });
+const meProfile = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield app_1.prisma.user.findUnique({
+        where: { email: user === null || user === void 0 ? void 0 : user.email },
+        select: {
+            name: true,
+            email: true,
+            phone: true,
+            role: true
+        }
+    });
+    return result;
+});
 exports.UserServices = {
     getAllUser,
+    meProfile,
 };

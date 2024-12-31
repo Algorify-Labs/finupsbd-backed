@@ -19,8 +19,21 @@ const getAllUsers = catchAsync(async (req, res) => {
 
 
 
+  const meProfile = catchAsync(async (req, res) => {
+   
+    const result = await UserServices.meProfile(req.user)
+    
+    res.status(StatusCodes.OK).json({
+        success: true, 
+        message: "User login successfully",
+        statusCode: StatusCodes.OK,
+        data: result
+    })
+})
+
 
 
 export const UserController = {
     getAllUsers,
+    meProfile
 }

@@ -25,6 +25,16 @@ const getAllUsers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         data: result
     });
 }));
+const meProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.meProfile(req.user);
+    res.status(http_status_codes_1.StatusCodes.OK).json({
+        success: true,
+        message: "User login successfully",
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        data: result
+    });
+}));
 exports.UserController = {
     getAllUsers,
+    meProfile
 };

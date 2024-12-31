@@ -27,7 +27,8 @@ model User {
   resetPasswordToken  String? // Token for password reset
   resetPasswordExpiry DateTime? // Expiry for password reset token
   role                Role      @default(USER)
-  profileId           Int?
+  profile             Profile?  
+  // profileId           Int?       @unique
   emailVerified       Boolean   @default(false)
   isActive            Boolean   @default(true)
   createdAt           DateTime  @default(now())
@@ -47,7 +48,8 @@ model Profile {
   avatar    String? // URL to profile picture
   phone     String? @unique
   address   String?
-  userId    Int
+  user      User?   @relation(fields: [userId], references: [id])
+  userId    Int     @unique
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------

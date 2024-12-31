@@ -6,6 +6,21 @@ const getAllUser = async () => {
   return result;
 };
 
+const meProfile = async (user: Record<string, unknown>) => {
+  const result = await prisma.user.findUnique({
+    where: {email: user?.email},
+    select: {
+      name: true, 
+      email: true, 
+      phone: true,
+      role: true 
+    }
+  });
+
+  return result;
+};
+
 export const UserServices = {
   getAllUser,
+  meProfile,
 };

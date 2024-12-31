@@ -19,6 +19,7 @@ const sendEmail_1 = __importDefault(require("../../utils/sendEmail"));
 const tokenGenerate_1 = require("../../utils/tokenGenerate");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const signUp = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(payload);
     payload.password = yield (0, passwordHash_1.passwordHash)(payload.password);
     //   const pin = crypto.randomBytes(3).toString('hex'); // 6-digit PIN
     const pin = Math.floor(100000 + Math.random() * 900000).toString();

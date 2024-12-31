@@ -6,9 +6,9 @@ const router = express.Router()
 
 
 
-router.get('/', auth("ADMIN"), UserController.getAllUsers)
+router.get('/', auth("USER"), UserController.getAllUsers)
 
-
+router.get('/my-profile', auth("USER", "ADMIN"), UserController.meProfile)
 
 // router.get('/:id', )
 // router.patch('/login',)
