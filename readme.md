@@ -1,7 +1,7 @@
 ## FinupsBD 
 
 ## Overview
-The **Blog Management System** is a robust full-stack web application that enables users to manage blogs while incorporating a secure role-based access control system. Admin users are granted additional privileges to manage users and blogs.
+-------------------------------------------
 
 ## Features
 
@@ -24,13 +24,14 @@ The **Blog Management System** is a robust full-stack web application that enabl
 
 #### Authorization:
 - Differentiates between Admin and User roles to secure actions.
-
+# Access the application at [http://localhost:5000](http://localhost:5000).
 ### API Endpoints
 | Endpoint                             | Method   | Description                                      |
 |--------------------------------------|----------|--------------------------------------------------|
-| `/api/v1/auth/signUp`                | `POST`   | Sign up a new user.                            |
+| `/api/v1/auth/signUp`                | `POST`   | Sign up a new user.                              |
 | `/api/v1/auth/login`                 | `POST`   | Authenticates a user and generates a token.      |
-| `/api/v1/auth/validate-pin`          | `POST`   | Send email for validation pin        |
+| `/api/v1/auth/validate-pin`          | `POST`   | Send email for validation pin                    |
+| `/api/v1/public/emi-calculator`      | `POST`   | Calculate Emi                                    |
 
 
 ## Technologies Used
@@ -48,7 +49,7 @@ The **Blog Management System** is a robust full-stack web application that enabl
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Shamimreza82/finupsbd-backend.git
+   git clone 
    ```
 2. Navigate to the project directory:
    ```bash
@@ -70,7 +71,7 @@ The **Blog Management System** is a robust full-stack web application that enabl
    ```bash
    npm run dev
    ```
-6. Access the application at [http://localhost:5000](http://localhost:5000).
+6. 
 
 ## Live Demo
 [Live URL](Soon.......)
