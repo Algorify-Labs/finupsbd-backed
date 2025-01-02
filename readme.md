@@ -32,7 +32,9 @@
 | `/api/v1/auth/login`                 | `POST`   | Authenticates a user and generates a token.      |
 | `/api/v1/auth/validate-pin`          | `POST`   | Send email for validation pin                    |
 | `/api/v1/public/emi-calculator`      | `POST`   | Calculate Emi                                    |
-
+| `/api/v1/auth/forget-password`       | `POST`   | user password forget                             |
+| `/api/v1/auth/reset-password`        | `POST`   | Calculate Emi                                    |
+ 
 
 ## Technologies Used
 - **Backend**: Node.js, Express.js

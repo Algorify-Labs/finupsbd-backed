@@ -5,7 +5,7 @@ import { accessTokenGenerate } from '../../utils/tokenGenerate';
 import { TUser } from '../user/user.interface';
 import bcrypt from 'bcrypt';
 
-//Sign up User 
+//Sign up User
 const signUp = async (payload: TUser) => {
   console.log(payload);
   payload.password = await passwordHash(payload.password);
@@ -17,7 +17,7 @@ const signUp = async (payload: TUser) => {
   payload.pinExpiry = pinExpiry;
 
   const result = await prisma.user.create({ data: payload });
-  console.log(result);
+
   const MailSubject = 'Your PIN for Verification';
   const MailText = `
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px; background-color: #f4f7fa; border-radius: 8px;">
@@ -64,8 +64,6 @@ const validatePin = async (payload: { email: string; pin: string }) => {
   return {};
 };
 
-
-
 // Login user------------------------------------------------------------------------------------------------------------
 
 const login = async (payload: { email: string; password: string }) => {
@@ -98,38 +96,149 @@ const login = async (payload: { email: string; password: string }) => {
   }
 
   const jwtPayload = {
-    userId: user?.id, 
+    userId: user?.id,
     role: user?.role,
-    email: user?.email
-  }
+    email: user?.email,
+  };
 
-  const accessToken = accessTokenGenerate(jwtPayload, "1d")
+  const accessToken = accessTokenGenerate(jwtPayload, '30d');
 
-
-
-  
   await prisma.user.update({
     where: {
-      email: user?.email
-    }, 
+      email: user?.email,
+    },
     data: {
-      lastLogin: new Date()
-    }
-  })   // last login tracking
+      lastLogin: new Date(),
+    },
+  }); // last login tracking
   return {
-    accessToken
+    accessToken,
   };
 };
 
+const forgetPassword = async (payload: { email: string }) => {
+  const { email } = payload;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (!user.emailVerified) {
+    throw new Error(
+      'Your email is not verified. Please verify your email'
+    );
+  }
+
+  if (!user?.isActive) {
+    throw new Error('Your account is inactive. Please contact support.');
+  }
+
+  //todo forget password
+
+  const pin = Math.floor(100000 + Math.random() * 900000).toString();
+  const pinExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+
+  const resetPin = await prisma.user.update({
+    where: { email },
+    data: {
+      pin: pin,
+      pinExpiry: pinExpiry,
+      emailVerified: false,
+    },
+  });
+
+  const emailSubject = 'Your PIN for Verification';
+  const bodyText = `
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px; background-color: #f4f7fa; border-radius: 8px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+      <h2 style="color: #333; text-align: center; font-size: 24px; margin-bottom: 20px;">Your Verification PIN Code</h2>
+      <p style="font-size: 16px; color: #555;">Hello ${user?.name}</p>
+      <p style="font-size: 16px; color: #555;">Your PIN code for verification is:</p>
+      <h2 style="color: #007BFF; font-size: 36px; font-weight: bold; text-align: center; margin: 20px 0;">${resetPin?.pin}</h2>
+      <p style="font-size: 16px; color: #555;"><strong>🔒 Security Note:</strong> This PIN is valid for <strong>15 minutes</strong> only. Please do not share it with anyone.</p>
+      <p style="font-size: 16px; color: #555;">If you did not request this PIN, please ignore this email or contact our support team immediately.</p>
+      <p style="font-size: 16px; color: #555;">Thank you,</p>
+      <p style="font-size: 16px; color: #555; font-weight: bold;">PinUpsDB</p>
+    </div>
+  </div>
+`;
+  await sendEmail(email, emailSubject, bodyText);
+
+  return {};
+};
+
+const resetPassword = async (payload: {
+  newPassword: string;
+  email: string;
+}) => {
+  const { email } = payload;
+console.log({email, passwordHash});
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (!user.emailVerified) {
+    throw new Error(
+      'Your email is not verified. Please verify your email before reset your password'
+    );
+  }
+
+  if (!user?.isActive) {
+    throw new Error('Your account is inactive. Please contact support.');
+  }
+
+  const passwordHashing = await passwordHash(payload?.newPassword) ;
+
+  await prisma.user.update({
+    where: { email },
+    data: { password: passwordHashing},
+  });
+
+  const emailSubject = 'Password Changed';
+  const bodyText = `
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px; background-color: #f4f7fa; border-radius: 8px;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="color: #333; text-align: center; font-size: 28px; margin-bottom: 20px; font-weight: bold;">Your Password Has Been Changed</h2>
+    <p style="font-size: 16px; color: #555; text-align: center;">Hello ${user?.name},</p>
+    <p style="font-size: 16px; color: #555; margin-bottom: 20px;">We wanted to let you know that your password has been successfully updated. If you initiated this change, no further action is required.</p>
+    
+    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px;">
+      <p style="font-size: 16px; color: #555; font-weight: bold;">Important Security Information:</p>
+      <ul style="font-size: 14px; color: #555; padding-left: 20px;">
+        <li style="margin-bottom: 8px;">If you did not request this change, please reset your password immediately.</li>
+        <li style="margin-bottom: 8px;">Check your account activity for any unusual behavior.</li>
+        <li style="margin-bottom: 8px;">For further assistance, contact our support team at <a href="mailto:support@pinupsdb.com" style="color: #007BFF;">support@pinupsdb.com</a>.</li>
+      </ul>
+    </div>
+
+    <p style="font-size: 16px; color: #555; text-align: center; margin-bottom: 30px;">Your security is our top priority. We take every measure to ensure your account remains protected.</p>
+
+    <div style="text-align: center;">
+      <p style="font-size: 16px; color: #555;">Thank you for using PinUpsDB!</p>
+      <p style="font-size: 16px; color: #555; font-weight: bold;">The PinUpsDB Team</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; font-size: 14px; color: #aaa;">
+      <p>If you did not request this change, please ignore this email. This message was sent automatically, and you do not need to reply.</p>
+    </div>
+  </div>
+</div>
+
+`;
 
 
-
-
-
-
+  await sendEmail(email, emailSubject, bodyText);
+  return {};
+};
 
 export const AuthServices = {
   signUp,
   validatePin,
   login,
+  forgetPassword,
+  resetPassword,
 };

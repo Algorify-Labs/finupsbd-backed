@@ -16,6 +16,7 @@ exports.passwordHash = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = require("../../config");
 const passwordHash = (password) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(password);
     const result = yield bcrypt_1.default.hash(password, Number(config_1.ConfigFile.BCRYPT_SALT_ROUNDS));
     return result;
 });

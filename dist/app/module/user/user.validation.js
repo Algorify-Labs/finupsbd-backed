@@ -28,6 +28,21 @@ const loginValidationSchema = zod_1.z.object({
     //   .regex(/^\d{11}$/, 'Phone number must be 11 digits'),
     password: zod_1.z.string().min(6, 'Password must be at least 6 characters long'),
 });
+const forgetPasswordValidationSchema = zod_1.z.object({
+    email: zod_1.z.string().email('Invalid email format').min(1, 'Email is required'),
+    // phone: z
+    //   .string()
+    //   .min(1, 'Phone is required')
+    //   .regex(/^\d{11}$/, 'Phone number must be 11 digits'),
+});
+const resetPasswordValidationSchema = zod_1.z.object({
+    email: zod_1.z.string().email('Invalid email format').min(1, 'Email is required'),
+    newPassword: zod_1.z.string().min(6, 'Password must be at least 6 characters long'),
+    // phone: z
+    //   .string()
+    //   .min(1, 'Phone is required')
+    //   .regex(/^\d{11}$/, 'Phone number must be 11 digits'),
+});
 // password = z
 //   .string()
 //   .min(8, 'Password must be at least 8 characters long') // Minimum length
@@ -42,5 +57,7 @@ const loginValidationSchema = zod_1.z.object({
 exports.UserValidation = {
     createUserValidationSchema,
     verifyPinValidationSchema,
-    loginValidationSchema
+    loginValidationSchema,
+    forgetPasswordValidationSchema,
+    resetPasswordValidationSchema
 };
