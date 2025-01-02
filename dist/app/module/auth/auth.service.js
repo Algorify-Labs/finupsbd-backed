@@ -18,6 +18,7 @@ const passwordHash_1 = require("../../utils/passwordHash");
 const sendEmail_1 = __importDefault(require("../../utils/sendEmail"));
 const tokenGenerate_1 = require("../../utils/tokenGenerate");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+//Sign up User 
 const signUp = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(payload);
     payload.password = yield (0, passwordHash_1.passwordHash)(payload.password);
@@ -66,6 +67,7 @@ const validatePin = (payload) => __awaiter(void 0, void 0, void 0, function* () 
     });
     return {};
 });
+// Login user------------------------------------------------------------------------------------------------------------
 const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = payload;
     const user = yield app_1.prisma.user.findUnique({ where: { email } });

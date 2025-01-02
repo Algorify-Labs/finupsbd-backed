@@ -1,13 +1,4 @@
-generator client {
-  provider = "prisma-client-js"
-}
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-/// Create user model ------------------------------------------------------------------------------------------------------------------------------
 
 enum Role {
   USER
@@ -46,10 +37,9 @@ model Profile {
   lastName  String
   bio       String?
   avatar    String? // URL to profile picture
-  phone     String? @unique
   address   String?
   user      User?   @relation(fields: [userId], references: [id])
   userId    Int     @unique
-}
 
-//----------------------------------------------------------------------------------------------------------------------------------------
+  @@map("profile") // Maps to the "users" table
+}

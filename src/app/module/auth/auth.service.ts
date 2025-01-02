@@ -5,6 +5,7 @@ import { accessTokenGenerate } from '../../utils/tokenGenerate';
 import { TUser } from '../user/user.interface';
 import bcrypt from 'bcrypt';
 
+//Sign up User 
 const signUp = async (payload: TUser) => {
   console.log(payload);
   payload.password = await passwordHash(payload.password);
@@ -62,6 +63,10 @@ const validatePin = async (payload: { email: string; pin: string }) => {
 
   return {};
 };
+
+
+
+// Login user------------------------------------------------------------------------------------------------------------
 
 const login = async (payload: { email: string; password: string }) => {
   const { email } = payload;

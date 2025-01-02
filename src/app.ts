@@ -25,6 +25,7 @@ app.use('/api/v1', RootRouter)
 
 app.get('/', (req: Request, res: Response) => {
   res.send({ message: 'Server is running' });
+  
 });
 
 app.use(globalErrorHandler)    //  global Error handler 

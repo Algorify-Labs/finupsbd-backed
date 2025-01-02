@@ -10,6 +10,7 @@ const createUserValidationSchema = zod_1.z.object({
         .min(1, 'Phone is required')
         .regex(/^\d{11}$/, 'Phone number must be 11 digits'),
     password: zod_1.z.string().min(6, 'Password must be at least 6 characters long'),
+    profile: zod_1.z.object({}).optional()
 });
 const verifyPinValidationSchema = zod_1.z.object({
     email: zod_1.z.string().email('Invalid email format').min(1, 'Email is required'),

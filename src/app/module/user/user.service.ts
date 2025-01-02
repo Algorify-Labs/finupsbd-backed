@@ -8,7 +8,7 @@ const getAllUser = async () => {
 
 const meProfile = async (user: Record<string, unknown>) => {
   const result = await prisma.user.findUnique({
-    where: {email: user?.email},
+    where: {email: user?.email as string},
     select: {
       name: true, 
       email: true, 

@@ -9,6 +9,7 @@ const createUserValidationSchema = z.object({
     .min(1, 'Phone is required')
     .regex(/^\d{11}$/, 'Phone number must be 11 digits'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
+  profile: z.object({}).optional()
 });
 
 
